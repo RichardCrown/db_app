@@ -380,7 +380,7 @@ public class VentanaPrincipal extends Stage {
                 new InformeGeneral("No eres Admin");
             }
         });
-        contenedor_uno = new HBox(new Label("Ord:"),total,cntidad_productos,mesa_field,NOM_CLIENTE,boton_refresh,boton_outro,boton_iniciar_ventana_elementos);
+        contenedor_uno = new HBox(new Label("O:"),total,cntidad_productos,mesa_field,NOM_CLIENTE,boton_refresh,boton_outro,boton_iniciar_ventana_elementos);
         contenedor_uno.setSpacing(20);
         contenedor_uno.setPadding(new Insets(25));
         contenedor_uno.getStyleClass().add("display-fondo2");
@@ -400,7 +400,7 @@ public class VentanaPrincipal extends Stage {
         contenedor_cate.setSpacing(20);
         contenedor_cate.setPadding(new Insets(25));
         contenedor_cate.setAlignment(Pos.CENTER);
-        contenedor_cate.setPrefSize(1100,600);
+        contenedor_cate.setPrefSize(1150,600);
         contenedor_cate.getStyleClass().add("display-fondo2");
 
         titulo_administrador= new Label("ADMINISTRADOR:");

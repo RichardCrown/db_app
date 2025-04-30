@@ -1,17 +1,18 @@
 package com.example.demo2.vistas;
 
-import com.example.demo2.modulos.ClientesDAO;
-import com.example.demo2.modulos.InsumosDAO;
+import com.example.demo2.modulos.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
+
+import java.util.List;
 
 public class insumos extends Stage {
 
@@ -38,7 +39,31 @@ public class insumos extends Stage {
 
     private TableView<InsumosDAO> tabla_insumos;
 
+    private ProveedoresDAO cat_proveedores;
+    List<Proveedores> lista_de_proveedores;
+
+    ObservableList<Proveedores> observable_lista;
+    ComboBox<Proveedores> comboBox;
+
     public insumos(TableView<InsumosDAO> tabla_insumos,InsumosDAO objeto_dao,String title_){
+        cat_proveedores = new ProveedoresDAO();
+        lista_de_proveedores= cat_proveedores.Obtener_Proveedores();
+
+        observable_lista= FXCollections.observableArrayList(lista_de_proveedores);
+        comboBox=new ComboBox<>(observable_lista);
+        comboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Proveedores proveedor_a){
+                return (proveedor_a!=null)?proveedor_a.getNombre():"";
+            }
+
+            @Override
+            public Proveedores fromString(String string) {
+                return null;
+            }
+        });
+
+
         this.title_=title_;
         this.tabla_insumos=tabla_insumos;
         CREAR_GUI();
@@ -55,7 +80,6 @@ public class insumos extends Stage {
             this.cantidad.setText(String.valueOf(objeto.getCantidad()));
             this.descripcion.setText(objeto.getDescripcion());
             this.observaciones.setText(objeto.getObservaciones());
-            this.idproveedor.setText(String.valueOf(objeto.getId_proveedor()));
         }
         //objeto = (objeto_dao==null)? new ClientesDAO():this.objeto;
         this.setTitle("Registrar Insumo");
@@ -88,11 +112,22 @@ public class insumos extends Stage {
 
 
             //
+            Proveedores selecion = comboBox.getSelectionModel().getSelectedItem();
+            if(selecion==null){
+                try{
+                    objeto.setId_proveedor(1);
+                }
+                catch (Exception e){
+                    new InformeGeneral("No se puede crear no existe El Proveedor");
+                }
+            }
+            else{
+                objeto.setId_proveedor(selecion.getId_proveedor());
+            }
             objeto.setNombre(nombre.getText());
             objeto.setCantidad(Integer.parseInt(cantidad.getText()));
             objeto.setDescripcion(descripcion.getText());
             objeto.setObservaciones(observaciones.getText());
-            objeto.setId_proveedor(Integer.parseInt(idproveedor.getText()));
             //
 
             if(option==true){
@@ -109,7 +144,7 @@ public class insumos extends Stage {
             //
         });
 
-        contenedor_padre=new VBox(title,txtnombre,nombre,txtcantidad,cantidad,txtdescripcion,descripcion,txtobservaciones,observaciones,txtidproveedor,idproveedor,enviar,salir);
+        contenedor_padre=new VBox(title,txtnombre,nombre,txtcantidad,cantidad,txtdescripcion,descripcion,txtobservaciones,observaciones,txtidproveedor,comboBox,enviar,salir);
         contenedor_padre.setSpacing(5);
         contenedor_padre.setPadding(new Insets(20));
         contenedor_padre.setAlignment(Pos.CENTER);

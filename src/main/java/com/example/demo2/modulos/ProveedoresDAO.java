@@ -5,6 +5,8 @@ import javafx.collections.ObservableList;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProveedoresDAO {
 
@@ -89,6 +91,23 @@ public class ProveedoresDAO {
             e.printStackTrace();
 
         }
+    }
+
+    public List<Proveedores> Obtener_Proveedores(){
+        String query = "SELECT * FROM Proveedores";
+        List<Proveedores> lista= new ArrayList<>();
+        try{
+            Statement stmt = conexion.connection.createStatement();
+            ResultSet result = stmt.executeQuery(query);
+            while(result.next()){
+                lista.add(new Proveedores(result.getInt("id_proveedor"),result.getString("nombre"),result.getString("telefono"),result.getString("direccion"),result.getString("email"),result.getString("nota")));
+            }
+        }
+        catch(Exception e){}
+
+
+
+        return lista;
     }
 
 

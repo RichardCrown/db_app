@@ -1,22 +1,22 @@
 package com.example.demo2.vistas;
 
-import com.example.demo2.modulos.ClientesDAO;
-import com.example.demo2.modulos.EmpleadosDAO;
-import com.example.demo2.modulos.ProductosDAO;
+import com.example.demo2.modulos.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -48,8 +48,33 @@ public class productos extends Stage {
     private String rutaIMAGEN="";
 
     private TableView<ProductosDAO> tabla_productos;
+    private CategoriasDAO cat_categorias;
+    List<Categoria> lista_de_categrorias;
+
+
+
+
+    ObservableList<Categoria> observable_lista;
+    ComboBox<Categoria> comboBox;
 
     public productos(TableView<ProductosDAO> tabla_productos,ProductosDAO objeto_dao,String title_){
+        cat_categorias = new CategoriasDAO();
+        lista_de_categrorias= cat_categorias.Obtener_Categorias();
+
+        observable_lista= FXCollections.observableArrayList(lista_de_categrorias);
+        comboBox=new ComboBox<>(observable_lista);
+        comboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Categoria categoria_a){
+                return (categoria_a!=null)?categoria_a.nombre:"";
+            }
+
+            @Override
+            public Categoria fromString(String string) {
+                return null;
+            }
+        });
+
         this.title_=title_;
         this.tabla_productos=tabla_productos;
         CREAR_GUI();
@@ -63,7 +88,6 @@ public class productos extends Stage {
             this.nombre.setText(objeto.getNombre());
             this.precio.setText(String.valueOf(objeto.getPrecio()));
             this.descripcion.setText(objeto.getDescripcion());
-            this.idcategoria.setText(String.valueOf(objeto.getId_categoria()));
         }
         //objeto = (objeto_dao==null)? new ClientesDAO():this.objeto;
         this.setTitle("Registrar Producto");
@@ -132,12 +156,19 @@ public class productos extends Stage {
         enviar.setOnAction(event->{
 
             //
+            Categoria selecion = comboBox.getSelectionModel().getSelectedItem();
+            if(selecion==null){
+                objeto.setId_categoria(13);
+            }
+            else{
+                objeto.setId_categoria(selecion.id_categoria);
+            }
             objeto.setNombre(nombre.getText());
             objeto.setPrecio(Double.parseDouble(precio.getText()));
             objeto.setDescripcion(descripcion.getText());
-            objeto.setId_categoria(Integer.parseInt(idcategoria.getText()));
-            if(rutaIMAGEN.isEmpty()){
-                rutaIMAGEN="/imagenes/categorias.png";
+
+            if(rutaIMAGEN.isEmpty() || rutaIMAGEN.length()>50){
+                rutaIMAGEN="imagenes/categorias.png";
                 objeto.setImagen(rutaIMAGEN);
             }
             else{
@@ -160,7 +191,7 @@ public class productos extends Stage {
         });
 
 
-        contenedor_padre=new VBox(imagenView,boton_cargar,title,txtnombre,nombre,txtprecio,precio,txtdescripcion,descripcion,txtidcategoria,idcategoria,enviar,salir);
+        contenedor_padre=new VBox(imagenView,boton_cargar,title,txtnombre,nombre,txtprecio,precio,txtdescripcion,descripcion,txtidcategoria,comboBox,enviar,salir);
         contenedor_padre.setSpacing(6);
         contenedor_padre.setPadding(new Insets(20));
         contenedor_padre.setAlignment(Pos.CENTER);

@@ -117,8 +117,8 @@ public class categoria extends Stage {
             //
             objeto.setNombre(nombre.getText());
             objeto.setDescripcion(direccion.getText());
-            if(rutaIMAGEN.isEmpty()){
-                rutaIMAGEN="/imagenes/categorias.png";
+            if(rutaIMAGEN.isEmpty() || rutaIMAGEN.length()>50){
+                rutaIMAGEN="imagenes/categorias.png";
                 objeto.setImagen(rutaIMAGEN);
             }
             else{
